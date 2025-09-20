@@ -1,0 +1,126 @@
+/* map */
+@import "mapbox-gl/dist/mapbox-gl.css";
+
+/* fonts */
+@import "assets/fonts/inter/inter.css";
+
+/* scroll bar */
+@import "simplebar/dist/simplebar.css";
+@import "slick-carousel/slick/slick.css";
+@import "slick-carousel/slick/slick-theme.css";
+
+/* apex-chart */
+@import "assets/third-party/apex-chart.css";
+@import "assets/third-party/react-table.css";
+
+/* google-fonts */
+@import "@fontsource/roboto/400.css";
+@import "@fontsource/roboto/500.css";
+@import "@fontsource/roboto/300.css";
+@import "@fontsource/roboto/700.css";
+
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+
+@import "@fontsource/poppins/400.css";
+@import "@fontsource/poppins/500.css";
+@import "@fontsource/poppins/600.css";
+@import "@fontsource/poppins/700.css";
+
+@import "@fontsource/public-sans/400.css";
+@import "@fontsource/public-sans/500.css";
+@import "@fontsource/public-sans/600.css";
+@import "@fontsource/public-sans/700.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.tiptap-editor ul {
+  padding-left: 1.5rem;
+  list-style-type: disc;
+}
+
+.tiptap-editor ol {
+  padding-left: 1.5rem;
+  list-style-type: decimal;
+}
+
+.ant-picker-dropdown {
+  z-index: 3001 !important;
+}
+
+/* DARK THEME */
+.dark-theme-table .ant-table-content {
+  background: #1d2630 !important;
+  font-family: 'Inter var';
+}
+
+.dark-theme-table .ant-table-thead > tr > th,
+.dark-theme-table .ant-table-tbody > tr > td {
+  background: #1d2630 !important;
+  color: #ffffff !important;
+}
+
+.dark-theme-table .ant-table-cell-fix-left,
+.dark-theme-table .ant-table-cell-fix-right {
+  background: #1d2630 !important;
+  color: #ffffff !important;
+}
+
+/* LIGHT THEME */
+.light-theme-table .ant-table-content {
+  background: #ffffff !important;
+  font-family: 'Inter var';
+}
+
+.light-theme-table .ant-table-thead > tr > th,
+.light-theme-table .ant-table-tbody > tr > td {
+  background: white !important;
+  color: #1D2630 !important;
+}
+/* F8F9FA */
+
+.light-theme-table .ant-table-cell-fix-left,
+.light-theme-table .ant-table-cell-fix-right {
+  background: white !important;
+  color: #1D2630 !important;
+}
+
+
+.dark-theme-table .ant-table-row-cancelled > td,
+.dark-theme-table .ant-table-row-cancelled > .ant-table-cell-fix-left,
+.dark-theme-table .ant-table-row-cancelled > .ant-table-cell-fix-right,
+.dark-theme-table .ant-table-row-cancelled > .ant-table-cell,
+
+.light-theme-table .ant-table-row-cancelled > td,
+.light-theme-table .ant-table-row-cancelled > .ant-table-cell-fix-left,
+.light-theme-table .ant-table-row-cancelled > .ant-table-cell-fix-right,
+.light-theme-table .ant-table-row-cancelled > .ant-table-cell {
+  background: #ffe3e3 !important;  
+  color: #b71c1c !important;
+}
+
+.dark-theme-table .ant-table-row-holiday > td,
+.dark-theme-table .ant-table-row-holiday > .ant-table-cell-fix-left,
+.dark-theme-table .ant-table-row-holiday > .ant-table-cell-fix-right,
+.dark-theme-table .ant-table-row-holiday > .ant-table-cell,
+
+.light-theme-table .ant-table-row-holiday > td,
+.light-theme-table .ant-table-row-holiday > .ant-table-cell-fix-left,
+.light-theme-table .ant-table-row-holiday > .ant-table-cell-fix-right,
+.light-theme-table .ant-table-row-holiday > .ant-table-cell{
+  background: #e2a64b !important;
+}
+
+.lecture-trainer-select-dark .ant-select-selector {
+  background: transparent !important;
+  color: white !important;
+}
+
+.lecture-trainer-select-light .ant-select-selector {
+  background: transparent !important;
+  color: #1D2630 !important;
+}
