@@ -32,11 +32,12 @@ import {
 import { Grid, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Empty, Result } from "antd";
-import { Bill, WalletMoney, Trash, Copy, Verify, Refresh2, ArrowDown } from "iconsax-react";
+import { Bill, WalletMoney, Trash, Copy, Verify, Refresh2, ArrowDown, ArrowLeft, ArrowRight } from "iconsax-react";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
 import config, { modalStyles, textColor } from "../../config";
 import { setPagination, getPagination } from '../../../pagination';
+import usePayments from "./hooks/usePayments.js";
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
 
@@ -68,8 +69,7 @@ const ShowPayments = ({ type, openExport }) => {
     const primaryMain = muiTheme.palette.primary.main;
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(getPagination('pending_payment') || 10);
-    const [payments, setPayments] = useState([]);
-    const [totalPage, setTotalPage] = useState(1);
+    const { payments, totalPage, error, getPayments } = usePayments({ page, pageSize, type });
 
     const [trainerBank, setTrainerBank] = useState({
         holderName: "",
@@ -96,35 +96,12 @@ const ShowPayments = ({ type, openExport }) => {
         getPayments(value, pageSize, type);
     };
 
+
     const handlePageSizeChange = (event) => {
         setPageSize(event.target.value);
         setPage(1);
         setPagination('pending_payment', event.target.value);
         getPayments(1, event.target.value, type);
-    };
-
-    const getPayments = async (page, pageSize, status) => {
-        const token = localStorage.getItem("token");
-        try {
-            const url = `${APIS["get-payments"]}?page=${page}&pageSize=${pageSize}&status=${status}`;
-            const resp = await fetch(url, {
-                method: "get",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            if (resp.status === 200) {
-                const data = await resp.json();
-                setTotalPage(Math.ceil(data.total / pageSize));
-                setPayments(data.data);
-            } else {
-                setToast({ open: true, message: "Some error while fetching payment ", severity: "error" })
-            }
-        } catch (Err) {
-            setToast({ open: true, message: "Some error while fetching payment ", severity: "error" })
-            console.log("Error while fetching data", Err);
-        }
     };
 
     const settlePayment = async (row) => {
@@ -211,8 +188,10 @@ const ShowPayments = ({ type, openExport }) => {
     };
 
     useEffect(() => {
-        getPayments(1, pageSize, type);
-    }, []);
+        if (error) {
+            setToast({ message: "Error while fetching payments details.", open: true, severity: "error" })
+        }
+    }, [error]);
 
     return (
         <>
@@ -232,7 +211,7 @@ const ShowPayments = ({ type, openExport }) => {
                 </Alert>
             </Snackbar>
 
-            <Stack direction="row" sx={{ mb: 2, minHeight: 35 }}>
+            <Stack direction="row" sx={{ mb: 2, minHeight: 35,mt:2 }}>
                 <Button
                     variant="contained"
                     size="small"
@@ -260,6 +239,7 @@ const ShowPayments = ({ type, openExport }) => {
                             </Typography>
                             <Button
                                 variant="outlined"
+                                size="small"
                                 color="primary"
                                 startIcon={<ArrowDown size={18} />}
                                 onClick={() => openExport()}
@@ -326,7 +306,9 @@ const ShowPayments = ({ type, openExport }) => {
                                                 <TableCell>
 
                                                     {
-                                                        ["pending", "failed"].includes(type) && <Button
+                                                        ["pending", "failed"].includes(type) &&
+                                                        <Button
+                                                            sx={{ borderRadius: 0.5 }}
                                                             variant="contained"
                                                             color={type === "pending" ? "primary" : "secondary"}
                                                             size="small"
@@ -342,7 +324,6 @@ const ShowPayments = ({ type, openExport }) => {
                                                     {
                                                         !["pending", "failed"].includes(type) && <Typography color="primary" fontWeight={500}>{new Date(row.updatedAt).toLocaleString()}</Typography>
                                                     }
-
                                                 </TableCell>
                                             </TableRow>
                                         ))}
@@ -693,10 +674,14 @@ const ShowPayments = ({ type, openExport }) => {
 
                     {dialogStep === 0 && (
                         <>
-                            <Button onClick={() => {
-                                closeDialog();
-                            }}>Cancel</Button>
                             <Button
+                                sx={{ borderRadius: 0.5 }}
+                                onClick={() => {
+                                    closeDialog();
+                                }}>Cancel</Button>
+                            <Button
+                                sx={{ borderRadius: 0.5 }}
+                                endIcon={<ArrowRight size={10} />}
                                 variant="contained"
                                 disabled={!payoutMethod || selectedPayments.length === 0}
                                 onClick={() => {
@@ -711,8 +696,13 @@ const ShowPayments = ({ type, openExport }) => {
 
                     {dialogStep === 1 && (
                         <>
-                            <Button onClick={() => setDialogStep(0)}>Back</Button>
                             <Button
+                                sx={{ borderRadius: 0.5 }}
+                                startIcon={<ArrowLeft size={10} />}
+                                onClick={() => setDialogStep(0)}
+                            >Back</Button>
+                            <Button
+                                sx={{ borderRadius: 0.5 }}
                                 variant="contained"
                                 onClick={() => {
                                     submitPayments();
@@ -727,6 +717,7 @@ const ShowPayments = ({ type, openExport }) => {
 
                     {dialogStep === 2 && (
                         <Button
+                            sx={{ borderRadius: 0.5 }}
                             variant="contained"
                             onClick={() => {
                                 closeDialog();

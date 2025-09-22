@@ -58,8 +58,6 @@ const getPaymentByDateMiddleware = (req, res, next) => {
     return res.status(400).json({ message: "Invalid type parameter." });
   }
 
-  console.log("startdate is", startDate, " and enddate is ", endDate);
-
   if (!startDate || !endDate) {
     return res
       .status(400)

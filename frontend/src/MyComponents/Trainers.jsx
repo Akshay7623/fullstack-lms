@@ -79,7 +79,7 @@ const Trainers = () => {
     dateOfBirth: null,
     photo: "",
     address: "",
-    bankName:"",
+    bankName: "",
     resume: null,
     id_document: null,
   });
@@ -413,7 +413,7 @@ const Trainers = () => {
                 <Button
                   variant="contained"
                   startIcon={<SearchNormal1 />}
-                  size="large"
+                  size="medium"
                   onClick={handleSearch}
                 >
                   Search
@@ -422,7 +422,7 @@ const Trainers = () => {
                 <Button
                   variant="contained"
                   startIcon={<TagCross />}
-                  size="large"
+                  size="medium"
                   onClick={handleClear}
                 >
                   Clear
@@ -442,7 +442,7 @@ const Trainers = () => {
                 <Button
                   variant="contained"
                   startIcon={<Box1 />}
-                  size="large"
+                  size="medium"
                   component={Link}
                   to={"/trainers/module"}
                 >
@@ -452,7 +452,7 @@ const Trainers = () => {
                 <Button
                   variant="contained"
                   startIcon={<Add />}
-                  size="large"
+                  size="medium"
                   component={Link}
                   to={"/trainers/add"}
                 >
@@ -678,16 +678,17 @@ const Trainers = () => {
                   View Resume
                 </Button>}
 
-                {trainerData.id_document && <Button color="primary"
-                  endIcon={<Eye size={18} />}
-                  onClick={() =>
-                    openResume(
-                      `${config.hostUrl}/uploads/trainer/${trainerData.id_document}`
-                    )
-                  }
-                  sx={{ minWidth: 120 }} >
-                  View ID
-                </Button>}
+                {trainerData.id_document &&
+                  <Button color="primary"
+                    endIcon={<Eye size={18} />}
+                    onClick={() =>
+                      openResume(
+                        `${config.hostUrl}/uploads/trainer/${trainerData.id_document}`
+                      )
+                    }
+                    sx={{ minWidth: 120 }} >
+                    View ID
+                  </Button>}
               </Box>
 
 

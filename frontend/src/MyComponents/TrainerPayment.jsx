@@ -126,7 +126,7 @@ const TrainerPayment = () => {
   const openExportDialog = () => {
     setExportModal({ open: true, type: active, startDate: null, endDate: null });
   }
-
+  
   return (
     <>
       <Breadcrumbs custom heading="trainer-payments" links={breadcrumbLinks} />
@@ -258,8 +258,7 @@ const TrainerPayment = () => {
         </DialogActions>
       </Dialog >
 
-      {active === "Pending" && <ShowPayments type="pending" openExport={openExportDialog} />
-      }
+      {active === "Pending" && <ShowPayments type="pending" openExport={openExportDialog} />}
       {active === "Settled" && <ShowPayments type="settled" openExport={openExportDialog} />}
       {active === "Processing" && <ShowPayments type="processing" openExport={openExportDialog} />}
       {active === "Failed" && <ShowPayments type="failed" openExport={openExportDialog} />}

@@ -640,7 +640,7 @@ const Batch = ({ batchType }) => {
             <Button
               variant="contained"
               startIcon={<Add />}
-              size="large"
+              size="medium"
               component={Link}
               onClick={handleAddBatch}
             >

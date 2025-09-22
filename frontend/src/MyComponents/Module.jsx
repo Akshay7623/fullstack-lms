@@ -23,7 +23,7 @@ import { Edit, Add, Trash as Delete } from "iconsax-react";
 import config from "../config";
 
 const breadcrumbLinks = [
-  { title: "trainers", to: "/trainers" },
+  { title: "trainers", to: "/trainers/list" },
   { title: "modules" },
 ];
 

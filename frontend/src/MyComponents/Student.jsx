@@ -668,7 +668,7 @@ function ReactTable({
               <Button
                 variant="contained"
                 startIcon={<SearchNormal1 />}
-                size="large"
+                size="medium"
                 onClick={handleSearch}
               >
                 Search
@@ -677,8 +677,8 @@ function ReactTable({
               <Button
                 variant="contained"
                 startIcon={<TagCross />}
-                size="large"
                 component={Link}
+                size="medium"
                 onClick={hanldeClear}
               >
                 Clear
@@ -688,7 +688,7 @@ function ReactTable({
                 <Button
                   variant="contained"
                   startIcon={<ShieldTick />}
-                  size="large"
+                  size="medium"
                   component={Link}
                   onClick={hanldeBatchAssign}
                 >
@@ -738,14 +738,14 @@ function ReactTable({
               <Button
                 variant="contained"
                 startIcon={<Add />}
-                size="large"
+                size="medium"
                 component={Link}
                 to={"/student/add"}
               >
                 Add Student
               </Button>
               <Button
-                size="large"
+                size="medium"
                 variant="outlined"
                 component={Link}
                 to={"/student/pending-enrollments"}

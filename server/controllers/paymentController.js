@@ -1,10 +1,11 @@
 const Payment = require("../models/payment.js");
 const crypto = require("crypto");
 const razorpayInstance = require("../middlewares/razorpayMiddleware.js");
+const trainerPayment = require("../models/trainerPayment.js");
 const { isNullOrUndefined } = require("../utils/validation.js");
 const processPayment = require("./processPaymentController.js");
-const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET
 
+const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
 
 const createOrder = async (req, res) => {
   const razorpay = await razorpayInstance();
@@ -52,11 +53,12 @@ const createOrder = async (req, res) => {
 };
 
 const handleWebhook = async (req, res) => {
-
   try {
-
     const razorpaySignature = req.headers["x-razorpay-signature"];
-    const generatedSignature = crypto.createHmac("sha256", webhookSecret).update(JSON.stringify(req.body)).digest("hex");
+    const generatedSignature = crypto
+      .createHmac("sha256", webhookSecret)
+      .update(JSON.stringify(req.body))
+      .digest("hex");
 
     if (generatedSignature !== razorpaySignature) {
       return res.status(200).json({ message: "Success" });
@@ -65,16 +67,51 @@ const handleWebhook = async (req, res) => {
     const { event, payload } = req.body;
     const paymentEntity = payload.payment?.entity;
 
-    console.log("Event are ", event, " and payload is ", payload);
+    if (event === "payout.processed") {
+      const payoutId = payload.payout.entity.id;
+      const updateDb = await trainerPayment.updateMany(
+        { payoutId: payoutId },
+        {
+          updatedAt: new Date(),
+          status: "settled",
+        }
+      );
+
+      return res.status(200).json({ message: "Okay" });
+    } else if (event === "payout.failed" || event === "payout.reversed") {
+      const payoutId = payload.payout.entity.id;
+
+      const updateDb = await trainerPayment.updateMany(
+        { payoutId: payoutId },
+        {
+          updatedAt: new Date(),
+          status: "failed",
+        }
+      );
+      return res.status(200).json({ message: "Okay" });
+    }
 
     if (event === "payment.captured") {
       const { method, amount, order_id } = paymentEntity;
-      const { firstName, lastName, course, program, mobile, email } = paymentEntity.notes;
-      processPayment({ method, amount, email, firstName, lastName, course, program, mobile, order_id }, res);
+      const { firstName, lastName, course, program, mobile, email } =
+        paymentEntity.notes;
+      processPayment(
+        {
+          method,
+          amount,
+          email,
+          firstName,
+          lastName,
+          course,
+          program,
+          mobile,
+          order_id,
+        },
+        res
+      );
     } else {
-      return res.status(200).json({ message: "Success" })
+      return res.status(200).json({ message: "Success" });
     }
-
   } catch (error) {
     console.error("Webhook processing error:", error);
     return res.status(200).json({ message: "Success" });
