@@ -64,7 +64,6 @@ import Logo from '../images/unnamed.png'
 import HeadingSelector from "./HeadingSelector";
 import config, { modalStyles, textColor, bgColor } from "../../config";
 import buildEmailHtml from '../utils/emailWrapperCss';
-import ShowLectureRow from "./ShowLectureRow";
 import LectureSkeleton from "./LectureSkeleton";
 import RescheduleDialog from '../components/RescheduleDialog';
 import EditTopicDialog from "../components/EditTopic";
@@ -78,6 +77,7 @@ import { useEmailPreference } from "../../contexts/EmailPreferenceContext";
 import LectureTopicInput from "./LectureTopicInput.jsx";
 import AntTable from "./AntTable.jsx";
 import MarkLectureDialog from "../components/MarkLectureDialog.jsx";
+// import ShowLectureRow from "./ShowLectureRow";
 
 
 dayjs.extend(utc);
@@ -1500,6 +1500,7 @@ const ViewSingleBatch = () => {
                     sendNotification={sendNotification}
                     changeDate={changeDate}
                     showToast={showToast}
+                    markCompleted={markCompleted}
                 />
             )}
 

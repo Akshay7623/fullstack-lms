@@ -33,19 +33,19 @@ import message4Dark from "assets/images/widget/message/message4Dark.svg";
 // ==============================|| HEADER CONTENT - CUSTOMIZATION ||============================== //
 
 const themeOptions = [
-  { name: "theme1", color: "#f5f5f5" },
-  { name: "theme2", color: "#1e1e1e" },
-  { name: "theme3", color: "#2196f3" },
-  { name: "theme4", color: "#4caf50" },
-  { name: "theme5", color: "#f44336" },
-  { name: "theme6", color: "#9c27b0" },
-  { name: "theme7", color: "#ff9800" },
+  { name: "theme1", color: "#305bdd" },
+  { name: "theme2", color: "#655ac8" },
+  { name: "theme3", color: "#0a7d3e" },
+  { name: "theme4", color: "#385ab5" },
+  { name: "theme5", color: "#d26415" },
+  { name: "theme6", color: "#288d99" },
+  { name: "theme7", color: "#05934c" },
 ];
 
 export default function Customization() {
   const theme = useTheme();
   const configContext = useContext(ConfigContext);
-  const [count, setCount] = useState(0);
+
   const message1 =
     theme.palette.mode === ThemeMode.DARK ? message1Dark : message1Light;
   const message2 =
@@ -69,15 +69,21 @@ export default function Customization() {
       const themeObj = JSON.parse(localTheme);
       console.log(themeObj);
       if (theme.palette.mode === "dark") {
-        configContext.onChangeMode("light");
-        // localStorage.setItem("able-pro-material-react-ts-config", JSON.stringify({ ...themeObj, mode: "light" }));
+        // configContext.onChangeMode("light");
+        localStorage.setItem("able-pro-material-react-ts-config", JSON.stringify({ ...themeObj, mode: "light" }));
       } else {
-        // localStorage.setItem("able-pro-material-react-ts-config", JSON.stringify({ ...themeObj, mode: "dark" }));
-        configContext.onChangeMode("dark");
+        localStorage.setItem("able-pro-material-react-ts-config", JSON.stringify({ ...themeObj, mode: "dark" }));
+        // configContext.onChangeMode("dark");
       }
-      // window.location.reload();
+      window.location.reload();
     }
   };
+
+  const changeThemeColor = (e) => {
+    const localTheme = localStorage.getItem("able-pro-material-react-ts-config")
+    localStorage.setItem("able-pro-material-react-ts-config", JSON.stringify({ ...JSON.parse(localTheme), presetColor: e.target.value }));
+    window.location.reload();
+  }
 
 
   return (
@@ -153,7 +159,7 @@ export default function Customization() {
                   <RadioGroup
                     row
                     value={configContext.presetColor || themeOptions[0].name}
-                    onChange={(e) => configContext.onChangePresetColor(e.target.value)}
+                    onChange={changeThemeColor}
                     sx={{ gap: 2 }}
                   >
                     {themeOptions.map((theme) => (

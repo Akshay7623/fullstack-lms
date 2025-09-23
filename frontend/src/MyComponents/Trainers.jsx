@@ -30,11 +30,14 @@ import getBatches from './utils/api/getBatches';
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import config, { modalStyles, textColor, bgColor } from "../config";
+import SendMailModal from "./components/SendMailModal";
 
 const breadcrumbLinks = [
   { title: "trainers", to: "/trainers/list" },
   { title: "trainer-details" },
 ];
+
+const goveIds = ["Aadhar Card", "PAN Card", "Voter Card", "Passport"];
 
 const Trainers = () => {
   const [name, setName] = useState("");
@@ -84,6 +87,19 @@ const Trainers = () => {
     id_document: null,
   });
 
+  const [oldPhoto, setOldPhoto] = useState("");
+  const [isNewResumeUploaded, setIsNewResumeUploaded] = useState(false);
+
+  const [mailModal, setMailModal] = useState({
+    open: false,
+    initialSubject: "",
+    initialContent: "",
+    initialEmails: [],
+    onClose: () => null,
+    showToast: () => null,
+    replacerFn: () => null,
+  });
+
   const validateEditForm = (data) => {
     const newErrors = {};
 
@@ -109,9 +125,6 @@ const Trainers = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
-  const [oldPhoto, setOldPhoto] = useState("");
-  const [isNewResumeUploaded, setIsNewResumeUploaded] = useState(false);
 
   const handleSearch = () => {
     let filtered = allTrainers;
@@ -265,7 +278,19 @@ const Trainers = () => {
     }));
   };
 
-  const goveIds = ["Aadhar Card", "PAN Card", "Voter Card", "Passport"];
+  const openSendMailModal = (t) => {
+
+    setMailModal({
+      open: true,
+      initialSubject: "",
+      initialContent: ``,
+      initialEmails: [t?.email],
+      onClose: () => setMailModal({ open: false, initialSubject: "", initialContent: "", initialEmails: [], onClose: () => null, showToast: () => null, replacerFn: () => null }),
+      showToast: setToast,
+      replacerFn: (e) => e
+    })
+  };
+
 
   const getPhotoSrc = (photo) =>
     !photo
@@ -342,6 +367,7 @@ const Trainers = () => {
           {toast.message}
         </Alert>
       </Snackbar>
+
       <Box>
         <Grid container spacing={0}>
           <Grid size={{ xs: 4, sm: 4 }}>
@@ -596,22 +622,31 @@ const Trainers = () => {
                     }}
                   >
                     <Typography
-                      variant="body2"
+                      variant="body1"
                       color="text.secondary"
-                      sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                      sx={{ display: "flex", alignItems: "center", gap: 1, fontWeight: 500 }}
                     >
-                      <Call size={16} style={{ marginRight: 4 }} />{" "}
+                      <Call size={18} style={{ marginRight: 4 }} />{" "}
                       {trainer.mobileNumber}
                     </Typography>
                     <Typography
-                      variant="body2"
+                      variant="body1"
                       color="text.secondary"
                       sx={{ display: "flex", alignItems: "center", gap: 1 }}
                     >
-                      <Sms size={16} style={{ marginRight: 4 }} />{" "}
+                      <Sms size={18} style={{ marginRight: 4 }} />{" "}
                       {trainer.email}
                     </Typography>
                   </Box>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    endIcon={<Sms size={16} />}
+                    sx={{ ml: 1, minWidth: 0, px: 1, borderRadius:0.5 }}
+                    onClick={() => openSendMailModal(trainer)}
+                  >
+                    Send Email
+                  </Button>
                   <Box
                     sx={{
                       mt: 1,
@@ -1377,6 +1412,8 @@ const Trainers = () => {
           </Box>
         </Modal>
       </Box>
+
+      <SendMailModal open={mailModal.open} onClose={mailModal.onClose} initialEmails={mailModal.initialEmails} initialSubject={mailModal.initialSubject} initialContent={mailModal.initialContent} showToast={mailModal.showToast} replacerFn={mailModal.replacerFn} />
     </>
   );
 };

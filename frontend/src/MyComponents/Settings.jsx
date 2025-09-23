@@ -2,7 +2,7 @@ import Breadcrumbs from "components/@extended/Breadcrumbs";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { useState } from "react";
-import { Edit, Trash } from "iconsax-react";
+import { Copy, Edit, Trash } from "iconsax-react";
 
 import {
     Box,
@@ -19,6 +19,7 @@ import {
     DialogContent,
     DialogActions,
     Button,
+    Tooltip,
 } from "@mui/material";
 import { useEffect } from "react";
 import config from '../config';
@@ -35,6 +36,9 @@ const breadcrumbLinks = [
     { title: "settings", to: "/settings" },
 ];
 
+const razorpayWebhook = `${window.location.origin}/api/payment/webhook`;
+
+
 const Settings = () => {
 
     const { settings, setSettings } = useEmailPreference();
@@ -45,6 +49,7 @@ const Settings = () => {
     });
 
     const [inputValue, setInputValue] = useState("");
+    const [copied, setCopied] = useState(false);
 
     const [toast, setToast] = useState({
         open: false,
@@ -387,9 +392,12 @@ const Settings = () => {
                                         },
                                     }}
                                 />
-                                <IconButton onClick={() => handleEditOpen("razorpaySecret")}>
-                                    <Edit size="20" variant="Linear" />
-                                </IconButton>
+
+                                <Tooltip title="Edit" arrow>
+                                    <IconButton onClick={() => handleEditOpen("razorpaySecret")}>
+                                        <Edit size="20" variant="Linear" />
+                                    </IconButton>
+                                </Tooltip>
                                 <IconButton color="error" onClick={() => handleDelete("razorpaySecret")}>
                                     <Trash size="20" variant="Linear" />
                                 </IconButton>
@@ -416,13 +424,53 @@ const Settings = () => {
                                         },
                                     }}
                                 />
-                                <IconButton onClick={() => handleEditOpen("razorpayKey")}>
-                                    <Edit size="20" variant="Linear" />
-                                </IconButton>
+                                <Tooltip title="Edit" arrow>
+                                    <IconButton onClick={() => handleEditOpen("razorpayKey")}>
+                                        <Edit size="20" variant="Linear" />
+                                    </IconButton>
+                                </Tooltip>
                                 <IconButton color="error" onClick={() => handleDelete("razorpayKey")}>
                                     <Trash size="20" variant="Linear" />
                                 </IconButton>
                             </Box>
+                        </Box>
+
+
+                        <Box sx={{ maxWidth: 500 }}>
+                            <Box display="flex" alignItems="center" gap={1}>
+                                <TextField
+                                    label="Razorpay Webhook URL"
+                                    value={razorpayWebhook}
+                                    disabled
+                                    fullWidth
+                                    sx={{
+                                        '& .MuiInputBase-input.Mui-disabled': {
+                                            color: 'text.primary',
+                                            WebkitTextFillColor: 'inherit',
+                                        },
+                                        '& .MuiInputLabel-root.Mui-disabled': {
+                                            color: 'text.primary',
+                                        },
+                                    }}
+                                />
+
+                                <Tooltip title={copied ? "Copied!" : "Copy webhook URL"} arrow>
+                                    <IconButton
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(razorpayWebhook);
+                                            setCopied(true);
+                                            setTimeout(() => setCopied(false), 2000);
+                                            setToast({ message: "Webhook copied successfully.", open: true, severity: "success" })
+                                        }}
+                                        color={copied ? "success" : "primary"}
+                                    >
+                                        <Copy size={18} />
+                                    </IconButton>
+                                </Tooltip>
+                            </Box>
+                            <Typography variant="caption" sx={{ color: "text.secondary", ml: 1, mt: 0.5 }}>
+                                Click the copy icon to copy your webhook URL.
+                            </Typography>
                         </Box>
                     </Stack>
                 </Paper>
@@ -431,4 +479,4 @@ const Settings = () => {
     )
 }
 
-export default Settings
+export default Settings;

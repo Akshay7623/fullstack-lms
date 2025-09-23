@@ -57,7 +57,6 @@ import Logo from '../images/unnamed.png'
 import HeadingSelector from "./HeadingSelector";
 import config, { modalStyles, textColor, bgColor } from "../../config";
 import buildEmailHtml from '../utils/emailWrapperCss';
-import ShowLectureRow from "./ShowLectureRow";
 import LectureSkeleton from "./LectureSkeleton";
 import RescheduleDialog from '../components/RescheduleDialog';
 import EditTopicDialog from "../components/EditTopic";
@@ -70,6 +69,8 @@ import { useEmailPreference } from "../../contexts/EmailPreferenceContext";
 import AntTable from "./AntTable";
 import LectureTopicInput from "./LectureTopicInput.jsx";
 import MarkLectureDialog from "../components/MarkLectureDialog.jsx";
+// import ShowLectureRow from "./ShowLectureRow";
+
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -103,8 +104,6 @@ const LectureTable = () => {
     onClose: () => null,
     onSave: () => null
   });
-
-
   // single state variable
   const [count, setCount] = useState(0);
   const [trainer, setTrainer] = useState("");
@@ -600,7 +599,8 @@ const LectureTable = () => {
     }
     setLoading(true);
     const html = editor.getHTML();
-    const htmlContent = html.replace("<p><strong>Note for Students:", "<p class='note'><strong>Note for Students:").replace("<p><strong>Note for Faculty:", "<p class='note'><strong>Note for Faculty:")
+    const htmlContent = html.replace("<p><strong>Note for Students:", "<p class='note'><strong>Note for Students:").replace("<p><strong>Note for Faculty:", "<p class='note'><strong>Note for Faculty:");
+
     const htmlWithCss = buildEmailHtml(htmlContent);
 
     try {

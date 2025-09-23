@@ -25,7 +25,7 @@ const AddLinkPopover = ({ anchorEl, onClose, onApply, initialUrl = "" }) => {
       onApply(linkUrl);
       onClose();
     } catch {
-      // alert("❌ Please enter a valid URL");
+      alert("❌ Please enter a valid URL");
     }
   };
 

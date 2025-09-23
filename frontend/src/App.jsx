@@ -4,6 +4,7 @@ import Loadable from "components/Loadable";
 import ThemeCustomization from "themes";
 import RTLLayout from "components/RTLLayout";
 import ScrollTop from "components/ScrollTop";
+import PrivateRoute from "components/PrivateRoute";
 import Courses from "./MyComponents/Courses.jsx";
 import { EmailPreferenceProvider } from "./contexts/EmailPreferenceContext";
 
@@ -15,14 +16,7 @@ import { EmailPreferenceProvider } from "./contexts/EmailPreferenceContext";
 
 import { JWTProvider as AuthProvider } from "contexts/JWTContext";
 import MainLayout from "MyComponents/Dashboard";
-import { ConfigProvider } from "./contexts/ConfigContext";
 
-
-// import Login from "./MyComponents/Login";
-// import Trainers from "./MyComponents/Trainers";
-// import AddTrainerPage from "./MyComponents/AddTrainer.jsx";
-// import AddCourse from "./MyComponents/AddCourse.jsx";
-// import TrainerPayment from "./MyComponents/TrainerPayment.jsx";
 // import { FirebaseProvider as AuthProvider } from 'contexts/FirebaseContext';
 // import { AWSCognitoProvider as AuthProvider } from 'contexts/AWSCognitoContext';
 // import { Auth0Provider as AuthProvider } from 'contexts/Auth0Context';
@@ -84,6 +78,7 @@ export default function App() {
         </RTLLayout>
       </ThemeCustomization>
       <Metrics /> */}
+
       <ThemeCustomization>
         <EmailPreferenceProvider>
           <RTLLayout>
@@ -95,51 +90,67 @@ export default function App() {
                   <Route path="/login" element={<Login />} />
 
                   <Route path="/student" element={<MainLayout />}>
-                    <Route path="view" element={<Student />} />
-                    <Route path="add" element={<AddStudent />} />
+                    <Route
+                      path="view"
+                      element={
+                        <PrivateRoute>
+                          <Student />
+                        </PrivateRoute>
+                      }
+                    />
+                    <Route
+                      path="add"
+                      element={
+                        <PrivateRoute>
+                          <AddStudent />
+                        </PrivateRoute>
+                      }
+                    />
                     <Route
                       path="pending-enrollments"
-                      element={<PendingEnrollments />}
+                      element={
+                        <PrivateRoute>
+                          <PendingEnrollments />
+                        </PrivateRoute>
+                      }
                     />
                   </Route>
 
                   <Route path="/trainers" element={<MainLayout />}>
-                    <Route path="list" element={<Trainers />} />
-                    <Route path="add" element={<AddTrainerPage />} />
-                    <Route path="trainer-payments" element={<TrainerPayment />} />
-                    <Route path="module" element={<Module />} />
+                    <Route path="list" element={<PrivateRoute><Trainers /></PrivateRoute>} />
+                    <Route path="add" element={<PrivateRoute><AddTrainerPage /></PrivateRoute>} />
+                    <Route path="trainer-payments" element={<PrivateRoute><TrainerPayment /></PrivateRoute>} />
+                    <Route path="module" element={<PrivateRoute><Module /></PrivateRoute>} />
                   </Route>
 
                   <Route path="/courses" element={<MainLayout />}>
-                    <Route index element={<Courses />} />
-                    <Route path="add" element={<AddCourse />} />
+                    <Route index element={<PrivateRoute><Courses /></PrivateRoute>} />
+                    <Route path="add" element={<PrivateRoute><AddCourse /></PrivateRoute>} />
                   </Route>
 
                   <Route path="/batches" element={<MainLayout />}>
-                    {/* <Route index element={<ActiveBatches />} /> */}
-                    <Route path="active" element={<ActiveBatches />} />
-                    <Route path="semi-active" element={<SemiActiveBatches />} />
-                    <Route path="archived" element={<ArchivedBatches />} />
-                    <Route path="calendar" element={<BatchCalendar />} />
-                    <Route path="view/:id" element={<ViewSingleBatch />} />
+                    <Route path="active" element={<PrivateRoute><ActiveBatches /></PrivateRoute>} />
+                    <Route path="semi-active" element={<PrivateRoute><SemiActiveBatches /></PrivateRoute>} />
+                    <Route path="archived" element={<PrivateRoute><ArchivedBatches /></PrivateRoute>} />
+                    <Route path="calendar" element={<PrivateRoute><BatchCalendar /></PrivateRoute>} />
+                    <Route path="view/:id" element={<PrivateRoute><ViewSingleBatch /></PrivateRoute>} />
                   </Route>
 
                   <Route path="/transactions" element={<MainLayout />}>
-                    <Route path="receipt" element={<Transactions />} />
+                    <Route path="receipt" element={<PrivateRoute><Transactions /></PrivateRoute>} />
                     <Route
                       path="latest-transaction"
-                      element={<LatestTransactions />}
+                      element={<PrivateRoute><LatestTransactions /></PrivateRoute>}
                     />
                   </Route>
 
-                  <Route path="/fees" element={<Fees />} />
+                  <Route path="/fees" element={<PrivateRoute><Fees /></PrivateRoute>} />
 
                   <Route path="/settings" element={<MainLayout />}>
-                    <Route index element={<Settings />} />
+                    <Route index element={<PrivateRoute><Settings /></PrivateRoute>} />
                   </Route>
-
-
                 </Routes>
+                
               </AuthProvider>
             </ScrollTop>
           </RTLLayout>

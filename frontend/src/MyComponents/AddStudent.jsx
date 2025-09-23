@@ -598,6 +598,10 @@ function AddStudent() {
                       variant="contained"
                       component="span"
                       color="primary"
+                      size="small"
+                      sx={{
+                        borderRadius: 0.5,
+                      }}
                     >
                       Upload
                     </Button>
@@ -653,6 +657,10 @@ function AddStudent() {
                       variant="contained"
                       component="span"
                       color="primary"
+                      size="small"
+                      sx={{
+                        borderRadius: 0.5,
+                      }}
                     >
                       Upload
                     </Button>
@@ -708,6 +716,10 @@ function AddStudent() {
                       variant="contained"
                       component="span"
                       color="primary"
+                      size="small"
+                      sx={{
+                        borderRadius: 0.5,
+                      }}
                     >
                       Upload
                     </Button>
@@ -764,6 +776,10 @@ function AddStudent() {
                       variant="contained"
                       component="span"
                       color="primary"
+                      size="small"
+                      sx={{
+                        borderRadius: 0.5,
+                      }}
                     >
                       Upload
                     </Button>
@@ -774,7 +790,7 @@ function AddStudent() {
           </Grid>
 
           <Grid size={12} sx={{ textAlign: "end" }}>
-            <Button variant="contained" onClick={handleSubmit}>
+            <Button variant="contained" onClick={handleSubmit} size="medium" sx={{ borderRadius: 0.5 }}>
               Submit
             </Button>
           </Grid>

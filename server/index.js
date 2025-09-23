@@ -36,7 +36,8 @@ const getCoursesRouter = require("./routes/getCourses.js");
 const Cloudflare = require("./routes/cloudflare.js");
 const VerifyStudent = require("./routes/VerifyStudent.js");
 const Settings = require("./routes/Settings.js");
-const trainerPaymentRoute = require("./routes/trainerPaymentRoute.js")
+const trainerPaymentRoute = require("./routes/trainerPaymentRoute.js");
+const authenticate = require("./middlewares/authentication.js");
 
 app.use("/api/login", login);
 app.use("/api/student", student);
@@ -54,8 +55,11 @@ app.use("/api/cloudflare", Cloudflare);
 app.use("/api/verify_student", VerifyStudent);
 app.use("/api/setting", Settings);
 
-app.use("/api/trainer-payment", trainerPaymentRoute);
+app.get("/api/auth/validate", authenticate, (req, res) =>
+  res.status(200).json({ valid: true })
+);
 
+app.use("/api/trainer-payment", trainerPaymentRoute);
 
 app.use("/uploads", express.static("uploads"));
 

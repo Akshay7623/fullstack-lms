@@ -19,7 +19,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
+  DialogActions
 } from "@mui/material";
 
 import { Modal } from "antd";
@@ -36,6 +36,7 @@ import {
   DocumentDownload,
   TagCross,
   ShieldTick,
+  Send2,
 } from "iconsax-react";
 import Grid from "@mui/material/Grid2";
 import Box from "@mui/material/Box";
@@ -52,7 +53,7 @@ import {
 import MainCard from "components/MainCard";
 import IconButton from "components/@extended/IconButton";
 import Breadcrumbs from "components/@extended/Breadcrumbs";
-import EmptyReactTable from "pages/tables/react-table/empty";
+// import EmptyReactTable from "pages/tables/react-table/empty";
 
 import {
   DebouncedInput,
@@ -77,6 +78,7 @@ import config, { modalStyles, textColor, bgColor } from "../config";
 
 import getCourses from "./utils/api/getCourses";
 import { getPagination } from "../../pagination";
+import SendMailModal from "./components/SendMailModal";
 
 dayjs.extend(isBetween);
 dayjs.extend(utc);
@@ -443,8 +445,6 @@ function ReactTable({
       })
   );
 
-  const handleOpenBatchDialog = () => setOpenBatchDialog(true);
-
   const handleCloseBatchDialog = () => {
     setOpenBatchDialog(false);
     setSelectedBatch("");
@@ -453,6 +453,7 @@ function ReactTable({
   const hanldeBatchAssign = () => {
     setOpenBatchDialog(true);
   };
+
 
   useEffect(() => {
     const allBatch = batches.map((b) => {
@@ -493,6 +494,7 @@ function ReactTable({
           {toast.message}
         </Alert>
       </Snackbar>
+
       <Dialog
         open={openBatchDialog}
         onClose={handleCloseBatchDialog}
@@ -622,7 +624,7 @@ function ReactTable({
               <MenuItem value="lastYear">Last year</MenuItem>
               <MenuItem value="custom">Custom Date Range</MenuItem>
             </Select>
-            
+
             {filters.enrolledDate === "custom" && (
               <ConfigProvider
                 locale={enGB}
@@ -677,8 +679,8 @@ function ReactTable({
               <Button
                 variant="contained"
                 startIcon={<TagCross />}
-                component={Link}
                 size="medium"
+                component={Link}
                 onClick={hanldeClear}
               >
                 Clear
@@ -700,6 +702,7 @@ function ReactTable({
                 title="Export all data into csv"
                 style={{ cursor: "pointer" }}
                 onClick={() => handleDownload(allStudents, true)}
+                arrow
               >
                 <Box sx={{ color: "text.secondary" }}>
                   <DocumentDownload
@@ -714,6 +717,7 @@ function ReactTable({
                 title="Export filtered data into csv"
                 style={{ cursor: "pointer" }}
                 onClick={() => handleDownload(students, false)}
+                arrow
               >
                 <Box sx={{ color: "text.secondary" }}>
                   <DocumentDownload
@@ -848,7 +852,7 @@ function ReactTable({
                 setPageIndex: table.setPageIndex,
                 getState: table.getState,
                 getPageCount: table.getPageCount,
-                initialPageSize : getPagination('student') || 10
+                initialPageSize: parseInt(getPagination('student')) || 10
               }}
             />
           </Box>
@@ -879,8 +883,18 @@ function StudentList({
   const [editModal, setEditModal] = useState(false);
   const [feesModal, setFeesModal] = useState(false);
   const [feesLoading, setFeesLoading] = useState(false);
-
   const [feesData, setFeesData] = useState([]);
+
+  const [mailModal, setMailModal] = useState({
+    open: false,
+    initialSubject: "",
+    initialContent: "",
+    initialEmails: [],
+    onClose: () => null,
+    showToast: () => null,
+    replacerFn: () => null,
+  });
+
 
   const [studentData, setStudentData] = useState({
     firstName: "",
@@ -896,6 +910,7 @@ function StudentList({
     courseName: "",
     parentName: "",
     parentMobile: "",
+    studentDocuments: {}
   });
 
   const [studentImages, setStudentImages] = useState({
@@ -1023,6 +1038,7 @@ function StudentList({
       if (resp.status === 200) {
         setEditModal(false);
         const data = await resp.json();
+
         setAllStudents((prev) =>
           prev.map((stu) =>
             stu._id === data.student._id ? { ...stu, ...data.student } : stu
@@ -1034,6 +1050,8 @@ function StudentList({
             stu._id === data.student._id ? { ...stu, ...data.student } : stu
           )
         );
+
+        setStudentData({ ...data.student, course: data.student.courseId, courseName: data.student.course });
 
         setToast({
           open: true,
@@ -1068,11 +1086,12 @@ function StudentList({
   };
 
   const handleEdit = () => {
-    setOpenResponsive(false);
+    // setOpenResponsive(false);
     setEditModal(true);
   };
 
   const handleEditModal = (data) => {
+    console.log("I mean ")
     const courseData = courses.find((course) => course.name === data.course);
     setStudentData({
       ...data,
@@ -1194,6 +1213,19 @@ function StudentList({
       });
       row.toggleSelected(false);
     }
+  };
+
+  const openSendMailModal = () => {
+
+    setMailModal({
+      open: true,
+      initialSubject: "",
+      initialContent: ``,
+      initialEmails: [studentData?.email || ""],
+      onClose: () => setMailModal({ open: false, initialSubject: "", initialContent: "", initialEmails: [], onClose: () => null, showToast: () => null, replacerFn: () => null }),
+      showToast: setToast,
+      replacerFn:(e)=> e
+    })
   };
 
   const columns = useMemo(
@@ -1461,6 +1493,7 @@ function StudentList({
     [courses, batches]
   );
 
+
   // if (loading) return <EmptyReactTable />;
 
   return (
@@ -1541,23 +1574,45 @@ function StudentList({
         }}
         zIndex={2000}
         footer={[
-          <Button
-            key="close"
-            endIcon={<CloseCircle size={18} />}
-            onClick={() => setOpenResponsive(false)}
-          >
-            Close
-          </Button>,
-          <Button
-            key="edit"
-            type="primary"
-            endIcon={<Edit size={18} />}
-            onClick={() => {
-              handleEdit(studentData.email);
-            }}
-          >
-            Edit
-          </Button>,
+          <Box key="footer-box" sx={{ mt: 2, display: "flex", justifyContent: 'space-between' }}>
+            <Box>
+              <Button
+                key="send-mail"
+                variant="contained"
+                endIcon={<Send2 size={18} />}
+                onClick={openSendMailModal}
+                size="small"
+                sx={{ borderRadius: 0.5 }}
+              >
+                Send mail
+              </Button>
+            </Box>
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <Button
+                key="edit"
+                type="primary"
+                variant="outlined"
+                endIcon={<Edit size={18} />}
+                onClick={() => {
+                  handleEdit(studentData.email);
+                }}
+                size="small"
+                sx={{ borderRadius: 0.5 }}
+              >
+                Edit
+              </Button>
+              <Button
+                key="close"
+                variant="outlined"
+                endIcon={<CloseCircle size={18} />}
+                onClick={() => setOpenResponsive(false)}
+                size="small"
+                sx={{ borderRadius: 0.5 }}
+              >
+                Close
+              </Button>
+            </Box>
+          </Box>
         ]}
       >
         <Table
@@ -1666,23 +1721,32 @@ function StudentList({
         }}
         zIndex={2000}
         footer={[
-          <Button
-            key="update"
-            endIcon={<Save2 size={18} />}
-            onClick={() => updateDetails(studentData._id)}
-          >
-            Save
-          </Button>,
-          <Button
-            key="close"
-            type="primary"
-            endIcon={<CloseCircle size={18} />}
-            onClick={() => {
-              setEditModal(false);
-            }}
-          >
-            Close
-          </Button>,
+
+          <Box sx={{ mt: 2, display: "flex", gap: 1, justifyContent: "flex-end" }}>
+            <Button
+              variant="outlined"
+              size="small"
+              key="update"
+              endIcon={<Save2 size={18} />}
+              sx={{ borderRadius: 0.5 }}
+              onClick={() => updateDetails(studentData._id)}
+            >
+              Save
+            </Button>
+            <Button
+              variant="outlined"
+              size="small"
+              key="close"
+              type="primary"
+              endIcon={<CloseCircle size={18} />}
+              sx={{ borderRadius: 0.5 }}
+              onClick={() => {
+                setEditModal(false);
+              }}
+            >
+              Close
+            </Button>
+          </Box>
         ]}
       >
         <Table
@@ -2092,6 +2156,10 @@ function StudentList({
                         variant="contained"
                         component="span"
                         color="primary"
+                        size="small"
+                        sx={{
+                          borderRadius: 0.5,
+                        }}
                       >
                         Upload
                       </Button>
@@ -2173,6 +2241,10 @@ function StudentList({
                         variant="contained"
                         component="span"
                         color="primary"
+                        size="small"
+                        sx={{
+                          borderRadius: 0.5,
+                        }}
                       >
                         Upload
                       </Button>
@@ -2254,6 +2326,10 @@ function StudentList({
                         variant="contained"
                         component="span"
                         color="primary"
+                        size="small"
+                        sx={{
+                          borderRadius: 0.5,
+                        }}
                       >
                         Upload
                       </Button>
@@ -2335,6 +2411,10 @@ function StudentList({
                         variant="contained"
                         component="span"
                         color="primary"
+                        size="small"
+                        sx={{
+                          borderRadius: 0.5,
+                        }}
                       >
                         Upload
                       </Button>
@@ -2443,6 +2523,9 @@ function StudentList({
           </Table>
         )}
       </Modal>
+
+      <SendMailModal open={mailModal.open} onClose={mailModal.onClose} initialEmails={mailModal.initialEmails} initialSubject={mailModal.initialSubject} initialContent={mailModal.initialContent} showToast={mailModal.showToast} replacerFn={mailModal.replacerFn} />
+
     </>
   );
 }

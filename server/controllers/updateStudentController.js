@@ -80,7 +80,7 @@ const updateStudentController = async (req, res) => {
         aadharCard,
         residenceAddress,
         studentDocuments,
-        courseId: courseId
+        courseId: courseId,
       },
       { new: true }
     );
